@@ -1086,30 +1086,28 @@ void showAnimClock0() {
 }
 
 void showAnimClock1() {
-  byte digPos[6] {5, 10, 18, 23, 15, 47,}; //digPos[0-3] первая-четвертая цифра, digPos[4] - начало точе верняя строка digPos[5] - нижнаяя строка 
-  if(hour < 10) {digPos[1]=7; digPos[2]=15; digPos[3]=20; digPos[4]=12; digPos[5]=44;}
-  if(fontCLOCK < 2 || bigCklock) {
-    if(hour < 10) {digPos[1]=5; digPos[2]=15; digPos[3]=22; digPos[4]=12; digPos[5]=44;}
-    else {digPos[0]=1; digPos[1]=8; digPos[2]=18; digPos[3]=25; digPos[4]=15; digPos[5]=47;}
-  } else if(fontCLOCK < 6 && !bigCklock) {
-    if(hour < 10) {digPos[1]=6; digPos[2]=15; digPos[3]=21; digPos[4]=12;}
-    else {digPos[0]=3; digPos[1]=9; digPos[2]=18; digPos[3]=24; digPos[4]=15;}
+  byte digPos[7] {0, 6, 13, 19, 26, 30, 11,}; //digPos[0-3] первая-четвертая цифра(ЧЧ/ММ), digPos[4,5] пятая-шестая цифра(СС),digPos[6] - мигающая точка
+  if(!bigCklock) {
+    if(hour < 10) {digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=13; digPos[5]=19;}
+    else {digPos[0]=0; digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=13; digPos[5]=19;}
   }
   int digHt = 16;
   bool num = hour < 10 ? 1 : 0;
   int i;
   if(del == 0) {
     del = digHt;
-    for(i = num; i < 4; i++) digold[i] = dig[i];
+    for(i = num; i < 6; i++) digold[i] = dig[i];
     dig[0] = hour / 10 ;
     dig[1] = hour % 10;
     dig[2] = minute / 10;
     dig[3] = minute % 10;
-    for(i = num; i < 4; i++)  digtrans[i] = (dig[i] == digold[i]) ? 0 : digHt;
+    dig[5] = second/ 10;
+    dig[6] = second % 10;
+    for(i = num; i < 6; i++)  digtrans[i] = (dig[i] == digold[i]) ? 0 : digHt;
   } else del--;
   clr(0);
   if(bigCklock) clr(1);
-  for(i = num; i < 4; i++) {   
+  for(i = num; i < 6; i++) {   
     if(digtrans[i] == 0) {
       dy = 0;
       if(!bigCklock) {
@@ -1142,36 +1140,25 @@ void showAnimClock1() {
     if(!alarm_stat){
      if(WIFI_connected){
       if((flash >= 180 && flash < 360) || flash >= 540) { // мерегтіння двокрапок в годиннику підвязуємо до личильника циклів
-        setCol(digPos[4], fontSizeCLOCK ? 0x36 : 0x66);
-        setCol(digPos[4]+1, fontSizeCLOCK ? 0x36 : 0x66);
+        setCol(digPos[6], fontSizeCLOCK ? 0x36 : 0x66);
+        setCol(digPos[6]+1, fontSizeCLOCK ? 0x36 : 0x66);
       }
-      if(statusUpdateNtpTime) { // якщо останнє оновленя часу було вдалим, то двокрапки в годиннику будуть анімовані
-        if(displayDot == 0){       
-        if(flash >= 0 && flash < 180) {
-          setCol(digPos[4], fontSizeCLOCK ? 0x14 : 0x24);
-          setCol(digPos[4]+1, fontSizeCLOCK ? 0x22 : 0x42);
-        }
-        if(flash >= 360 && flash < 540) {
-          setCol(digPos[4], fontSizeCLOCK ? 0x22 : 0x42);
-          setCol(digPos[4]+1, fontSizeCLOCK ? 0x14 : 0x24); 
-        }
-          }else if(displayDot == 1){
-          if(millis() / 1000 % 2){
-          setCol(digPos[4], fontSizeCLOCK ? 0x26 : 0x46);
-          setCol(digPos[4]+1, fontSizeCLOCK ? 0x26 : 0x46); 
-        }else {
-          setCol(digPos[4], fontSizeCLOCK ? 0x32 : 0x62);
-          setCol(digPos[4]+1, fontSizeCLOCK ? 0x32 : 0x62);     
-           }            
-          }
-        }
+      if(statusUpdateNtpTime) { // якщо останнє оновленя часу було вдалим, то двокрапки в годиннику будуть анімовані 
+      if(flash <= 500){
+          setCol(digPos[6], fontSizeCLOCK ? 0x40 : 0x80);     
+          setCol(digPos[6] + 1,0x00);
+      } else {
+          setCol(digPos[6],0x00);
+          setCol(digPos[6]+1, fontSizeCLOCK ? 0x40 : 0x80);          
+      }
+    } 
     }else {     
       if(flash <= 500){
-          setCol(digPos[4], fontSizeCLOCK ? 0x40 : 0x80);     
-          setCol(digPos[4] + 1,0x00);
+          setCol(digPos[6], fontSizeCLOCK ? 0x40 : 0x80);     
+          setCol(digPos[6] + 1,0x00);
       } else {
-          setCol(digPos[4],0x00);
-          setCol(digPos[4]+1, fontSizeCLOCK ? 0x40 : 0x80);          
+          setCol(digPos[6],0x00);
+          setCol(digPos[6]+1, fontSizeCLOCK ? 0x40 : 0x80);          
       }
     }       
       if(updateForecast && WIFI_connected) setCol(00, flash < 500 ? 0x80 : 0x00);
@@ -1179,45 +1166,31 @@ void showAnimClock1() {
     } else if(!runningLine){
       if(flash >= 360 && flash < 540) {
         clr(1);
-        setCol(digPos[4], (fontSizeCLOCK ? 0x36 : 0x66));
-        setCol(digPos[4]+1, (fontSizeCLOCK ? 0x36 : 0x66));
-        showDigit(12, (NUM_MAX0*4-3), (fontSizeData?znaki5x7:znaki5x8), 1);
+        setCol(digPos[6], (fontSizeCLOCK ? 0x36 : 0x66));
+        setCol(digPos[6]+1, (fontSizeCLOCK ? 0x36 : 0x66));
+        showDigit(12, (NUM_MAX0*6-3), (fontSizeData?znaki5x7:znaki5x8), 1);
       } else {
-        showDigit(13, (NUM_MAX0*4-3), (fontSizeData?znaki5x7:znaki5x8), 1);
+        showDigit(13, (NUM_MAX0*6-3), (fontSizeData?znaki5x7:znaki5x8), 1);
       }
     }
   } else {
     if(!alarm_stat){
     if(WIFI_connected){
     if((flash >= 180 && flash < 360) || flash >= 540) { // мерегтіння двокрапок в годиннику підвязуємо до личильника циклів
-      setCol(digPos[4], 0x30);
-      setCol(digPos[4]+1, 0x30);
-      setCol(digPos[5]+(aliData*(NUM_MAX1-4)), 0x0C);
-      setCol(digPos[5]+1+(aliData*(NUM_MAX1-4)), 0x0C);
+      setCol(digPos[6], 0x30);
+      setCol(digPos[6]+1, 0x30);
     }
     if(statusUpdateNtpTime) { // якщо останнє оновленя часу було вдалим, то двокрапки в годиннику будуть анімовані
       if(flash >= 0 && flash < 180) {
-        setCol(digPos[4], 0x10);
-        setCol(digPos[4]+1, 0x20);
-        setCol(digPos[5]+(aliData*(NUM_MAX1-4)), 0x08);
-        setCol(digPos[5]+1+(aliData*(NUM_MAX1-4)), 0x04);
+        setCol(digPos[6], 0x10);
+        setCol(digPos[6]+1, 0x20);
       }
       if(flash >= 360 && flash < 540) {
-        setCol(digPos[4], 0x20);
-        setCol(digPos[4]+1, 0x10);
-        setCol(digPos[5]+(aliData*(NUM_MAX1-4)), 0x04);
-        setCol(digPos[5]+1+(aliData*(NUM_MAX1-4)), 0x08);
+        setCol(digPos[6], 0x20);
+        setCol(digPos[6]+1, 0x10);
       }
     }
-    }else {
-      if(flash <= 500){  
-        setCol(digPos[5]+(aliData*(NUM_MAX1-4)), 0x30);
-        setCol(digPos[5]+1+(aliData*(NUM_MAX1-4)), 0x00);        
-      } else {
-        setCol(digPos[5]+(aliData*(NUM_MAX1-4)), 0x00);
-        setCol(digPos[5]+1+(aliData*(NUM_MAX1-4)), 0x30);         
-      }
-    }    
+    }   
     if(updateForecast && WIFI_connected) setCol(00, flash < 500 ? 0x80 : 0x00);
     if(updateForecasttomorrow && WIFI_connected) setCol(31, flash < 500 ? 0x80 : 0x00);
   } else { // - кода сработал будильник
