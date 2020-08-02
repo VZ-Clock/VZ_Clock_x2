@@ -1088,8 +1088,8 @@ void showAnimClock0() {
 void showAnimClock1() {
   byte digPos[7] {0, 6, 13, 19, 26, 30, 11,}; //digPos[0-3] первая-четвертая цифра(ЧЧ/ММ), digPos[4,5] пятая-шестая цифра(СС),digPos[6] - мигающая точка
   if(!bigCklock) {
-    if(hour < 10) {digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=13; digPos[5]=19;}
-    else {digPos[0]=0; digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=13; digPos[5]=19;}
+    if(hour < 10) {digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=26; digPos[5]=30;}
+    else {digPos[0]=0; digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=26; digPos[5]=30;}
   }
   int digHt = 16;
   bool num = hour < 10 ? 1 : 0;
