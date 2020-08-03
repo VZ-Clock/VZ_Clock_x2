@@ -1123,7 +1123,7 @@ void showAnimClock1() {
     } else {
       dy = digHt - digtrans[i];
       if(!bigCklock) {
-      if(i == 5 || i == 6) {        
+      if(i == 4 || i == 5) {        
         showDigit(dig[i], digPos[i], dig3x5, 0);
       } else {
         showDigit(dig[i], digPos[i], dig5x7b, 0);    
@@ -1134,7 +1134,7 @@ void showAnimClock1() {
       }
       dy =- digtrans[i];
       if(!bigCklock) {
-      if(i == 5 || i == 6) {        
+      if(i == 4 || i == 5) {        
         showDigit(dig[i], digPos[i], dig3x5, 0);
       } else {
         showDigit(dig[i], digPos[i], dig5x7b, 0);    
