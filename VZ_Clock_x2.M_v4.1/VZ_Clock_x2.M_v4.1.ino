@@ -1086,10 +1086,10 @@ void showAnimClock0() {
 }
 
 void showAnimClock1() {
-  byte digPos[7] {0, 6, 13, 19, 26, 30, 11,}; //digPos[0-3] первая-четвертая цифра(ЧЧ/ММ), digPos[4,5] пятая-шестая цифра(СС),digPos[6] - мигающая точка
+  byte digPos[7] {0, 6, 13, 19, 25, 29, 11,}; //digPos[0-3] первая-четвертая цифра(ЧЧ/ММ), digPos[4,5] пятая-шестая цифра(СС),digPos[6] - мигающая точка
   if(!bigCklock) {
-    if(hour < 10) {digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=26; digPos[5]=30;}
-    else {digPos[0]=0; digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=26; digPos[5]=30;}
+    if(hour < 10) {digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=25; digPos[5]=29;}
+    else {digPos[0]=0; digPos[1]=6; digPos[2]=13; digPos[3]=19; digPos[4]=25; digPos[5]=29;}
   }
   int digHt = 16;
   bool num = hour < 10 ? 1 : 0;
@@ -1101,8 +1101,8 @@ void showAnimClock1() {
     dig[1] = hour % 10;
     dig[2] = minute / 10;
     dig[3] = minute % 10;
-    dig[5] = second/ 10;
-    dig[6] = second % 10;
+    dig[4] = second / 10;
+    dig[5] = second % 10;
     for(i = num; i < 6; i++)  digtrans[i] = (dig[i] == digold[i]) ? 0 : digHt;
   } else del--;
   clr(0);
@@ -1111,7 +1111,11 @@ void showAnimClock1() {
     if(digtrans[i] == 0) {
       dy = 0;
       if(!bigCklock) {
-        showDigit(dig[i], digPos[i], dig5x7b, 0);
+      if(i == 4 || i == 5) {        
+        showDigit(dig[i], digPos[i], dig3x5, 0);
+      } else {
+        showDigit(dig[i], digPos[i], dig5x7b, 0);    
+      } 
       } else {
         showDigit(dig[i], digPos[i], dig6x8bigH, 0);
         showDigit(dig[i], digPos[i]+(aliData*(NUM_MAX1-4)), dig6x8bigL, 1);
@@ -1119,14 +1123,22 @@ void showAnimClock1() {
     } else {
       dy = digHt - digtrans[i];
       if(!bigCklock) {
-        showDigit(dig[i], digPos[i], dig5x7b, 0);
+      if(i == 5 || i == 6) {        
+        showDigit(dig[i], digPos[i], dig3x5, 0);
+      } else {
+        showDigit(dig[i], digPos[i], dig5x7b, 0);    
+      } 
       } else {
         showDigit(digold[i], digPos[i], dig6x8bigH, 0);
         showDigit(digold[i], digPos[i]+(aliData*(NUM_MAX1-4)), dig6x8bigL, 1);
       }
       dy =- digtrans[i];
       if(!bigCklock) {
-        showDigit(dig[i], digPos[i], dig5x7b, 0);
+      if(i == 5 || i == 6) {        
+        showDigit(dig[i], digPos[i], dig3x5, 0);
+      } else {
+        showDigit(dig[i], digPos[i], dig5x7b, 0);    
+      } 
       } else {
         showDigit(dig[i], digPos[i], dig6x8bigH, 0);
         showDigit(dig[i], digPos[i]+(aliData*(NUM_MAX1-4)), dig6x8bigL, 1);
